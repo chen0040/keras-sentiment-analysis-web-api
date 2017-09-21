@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+.idea/
+*.iml
+
+Thumbs.db
+
+keras_sentiment/uploads
+
 # Distribution / packaging
 .Python
 env/

@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+    <p>Upload your picture and we will try to what it is using cifar10 classifier</p>
+    <form method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+{% endblock %}
