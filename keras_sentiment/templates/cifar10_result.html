@@ -1,9 +1,0 @@
-{% extends "layout.html" %}
-{% block body %}
-    <img src="/images/{{ filename }}" />
-    <br />
-    <hr />
-    I guess you have uploaded a {{ predicted_label }} picture (class {{ predicted_class }})
-    <hr />
-    <a href="{{ url_for('cifar10') }}">Try another picture</a>
-{% endblock %}
