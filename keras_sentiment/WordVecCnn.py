@@ -26,7 +26,7 @@ class WordVecCnn(object):
         xs.append(wid)
         x = pad_sequences(xs, max_len)
         output = self.model.predict(x)
-        return output
+        return output[0]
 
     def test_run(self, sentence):
         print(self.predict(sentence))
