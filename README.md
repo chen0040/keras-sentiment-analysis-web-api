@@ -21,6 +21,7 @@ trained classifiers:
 
 * 1-D CNN with Word Embedding 
 * Feedforward network with Glove Word Embedding
+* LSTM with binary or category cross-entropy
 
 
 
