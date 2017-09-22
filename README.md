@@ -20,6 +20,7 @@ Now navigate your browser to http://localhost:5000 and you can try out various p
 trained classifiers:
 
 * 1-D CNN with Word Embedding 
+* Feedforward network with Glove Word Embedding
 
 
 

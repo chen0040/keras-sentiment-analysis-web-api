@@ -4,7 +4,7 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.utils import np_utils
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from sklearn.cross_validation import train_test_split
 
 DATA_FILE = 'data/umich-sentiment-train.txt'
@@ -53,6 +53,7 @@ for line in file:
 W = pad_sequences(sx, maxlen=max_len)
 Y = np_utils.to_categorical(sy, 2)
 
+
 word2em = {}
 file = open(GLOVE_MODEL, mode='rb')
 for line in file:
@@ -62,10 +63,12 @@ for line in file:
     word2em[word] = embeds
 file.close()
 
+X = np.zeros(shape=(W.shape[0], EMBED_SIZE))
 for i in range(W.shape[0]):
     words = [idx2word[idx] for idx in W[i].tolist()]
     E = np.zeros(shape=(EMBED_SIZE, max_len))
-    for word in words:
+    for j in range(max_len):
+        word = words[j]
         try:
             E[:, j] = word2em[word]
         except KeyError:
@@ -74,12 +77,13 @@ for i in range(W.shape[0]):
 
 
 model = Sequential()
-model.add(Dense(units=32, activation='relu', input_dim=EMBED_SIZE))
+model.add(Dense(units=64, activation='relu', input_dim=EMBED_SIZE))
+model.add(Dropout(0.2))
 model.add(Dense(units=2, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-Xtrain, Ytrain, Xtest, Ytest = train_test_split(X, Y, test_size=0.2, random_state=42)
+Xtrain, Xtest, Ytrain, Ytest = train_test_split(X, Y, test_size=0.2, random_state=42)
 
 model.fit(Xtrain, Ytrain, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, verbose=1, validation_data=[Xtest, Ytest])
 

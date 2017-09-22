@@ -6,7 +6,8 @@ setup(
     include_package_data=True,
     install_requires=[
         'flask',
-        'keras'
+        'keras',
+        'sklearn'
     ],
     setup_requires=[
         'pytest-runner',

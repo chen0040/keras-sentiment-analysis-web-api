@@ -1,5 +1,6 @@
 from flask import Flask, request, send_from_directory, redirect, render_template, flash, url_for
 from keras_sentiment.wordvec_cnn_predict import WordVecCnn
+from keras_sentiment.wordvec_lstm_predict_sigmoid import WordVecLstmSigmoid
 
 app = Flask(__name__)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
@@ -10,6 +11,9 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 wordvec_cnn_classifier = WordVecCnn()
 wordvec_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')
+
+lstm_sigmoid_c = WordVecLstmSigmoid()
+lstm_sigmoid_c.test_run('i liked the Da Vinci Code a lot.')
 
 
 @app.route('/')
@@ -36,6 +40,23 @@ def wordvec_cnn():
             sentiments = wordvec_cnn_classifier.predict(sent)
             return render_template('wordvec_cnn_result.html', sentence=sent, sentiments=sentiments)
     return render_template('wordvec_cnn.html')
+
+
+@app.route('/lstm_sigmoid', methods=['POST', 'GET'])
+def lstm_sigmoid():
+    if request.method == 'POST':
+        if 'sentence' not in request.form:
+            flash('No sentence post')
+            redirect(request.url)
+        elif request.form['sentence'] == '':
+            flash('No sentence')
+            redirect(request.url)
+        else:
+            sent = request.form['sentence']
+            positive_sentiment = lstm_sigmoid_c.predict(sent)
+            return render_template('lstm_sigmoid_result.html', sentence=sent,
+                                   sentiments=[positive_sentiment, 1 - positive_sentiment])
+    return render_template('lstm_sigmoid.html')
 
 
 if __name__ == '__main__':
