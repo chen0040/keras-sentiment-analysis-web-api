@@ -1,5 +1,5 @@
 from flask import Flask, request, send_from_directory, redirect, render_template, flash, url_for
-from keras_sentiment.WordVecCnn import WordVecCnn
+from keras_sentiment.wordvec_cnn_predict import WordVecCnn
 
 app = Flask(__name__)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
