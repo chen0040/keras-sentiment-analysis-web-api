@@ -10,7 +10,7 @@ Run the following command to install the keras, flask and other dependency modul
 sudo pip install -r requirements.txt
 ```
 
-Goto keras_sentiment directory and run the following command:
+Goto keras_sentiment_analysis_web directory and run the following command:
 
 ```bash
 python flaskr.py

@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory, redirect, render_template, flash, url_for
-from keras_sentiment.wordvec_cnn_predict import WordVecCnn
-from keras_sentiment.wordvec_lstm_predict_sigmoid import WordVecLstmSigmoid
-from keras_sentiment.wordvec_lstm_predict_softmax import WordVecLstmSoftmax
+from keras_sentiment_analysis_web.wordvec_cnn_predict import WordVecCnn
+from keras_sentiment_analysis_web.wordvec_lstm_predict_sigmoid import WordVecLstmSigmoid
+from keras_sentiment_analysis_web.wordvec_lstm_predict_softmax import WordVecLstmSoftmax
 
 app = Flask(__name__)
 app.config.from_object(__name__)  # load config from this file , flaskr.py

@@ -23,7 +23,7 @@ class WordVecLstmSigmoid(object):
         xs = []
         max_len = self.context['maxlen']
         tokens = [w.lower() for w in nltk.word_tokenize(sentence)]
-        wid = [self.word2idx[token] if token in self.word2idx else len(self.word2idx) for token in tokens]
+        wid = [self.word2idx[token] if token in self.word2idx else 1 for token in tokens]
         xs.append(wid)
         x = pad_sequences(xs, max_len)
         output = self.model.predict(x)
