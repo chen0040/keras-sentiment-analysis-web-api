@@ -12,7 +12,7 @@ __pycache__/
 Thumbs.db
 
 keras_sentiment/uploads
-keras_sentiment_analysis/very_large_data
+keras_sentiment_analysis_train/very_large_data
 
 # Distribution / packaging
 .Python

@@ -11,13 +11,13 @@ class WordVecLstmSoftmax(object):
     context = None
 
     def __init__(self):
-        json = open('../keras_sentiment_analysis/models/lstm_softmax_architecture.json', 'r').read()
+        json = open('../keras_sentiment_analysis_train/models/lstm_softmax_architecture.json', 'r').read()
         self.model = model_from_json(json)
-        self.model.load_weights('../keras_sentiment_analysis/models/lstm_softmax_weights.h5')
+        self.model.load_weights('../keras_sentiment_analysis_train/models/lstm_softmax_weights.h5')
         self.model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-        self.word2idx = np.load('../keras_sentiment_analysis/models/umich_idx2word_lstm.npy').item()
-        self.idx2word = np.load('../keras_sentiment_analysis/models/umich_word2idx_lstm.npy').item()
-        self.context = np.load('../keras_sentiment_analysis/models/umich_context_lstm.npy').item()
+        self.word2idx = np.load('../keras_sentiment_analysis_train/models/umich_idx2word_lstm.npy').item()
+        self.idx2word = np.load('../keras_sentiment_analysis_train/models/umich_word2idx_lstm.npy').item()
+        self.context = np.load('../keras_sentiment_analysis_train/models/umich_context_lstm.npy').item()
 
     def predict(self, sentence):
         xs = []
