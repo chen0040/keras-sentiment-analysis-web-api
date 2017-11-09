@@ -10,6 +10,29 @@ Run the following command to install the keras, flask and other dependency modul
 sudo pip install -r requirements.txt
 ```
 
+## Training (Optional)
+
+As the trained models are already included in the "keras_sentiment_analysis_train/models" folder in the project, the training is
+not required. However, if you like to tune the parameters and retrain the models, you can use the 
+following command to run the training:
+
+```bash
+cd translator_train
+python wordvec_bidirectional_lstm_train_softmax.py
+```
+
+The above commands will train bidrectional lstm model with softmax activation on the "keras_sentiment_analysis_train/data/umich-sentiment-train.txt" 
+dataset and store the trained model in "chatbot_train/models/bidirectional_lstm_softmax_**"
+
+If you like to train other models, you can use the same command above on another train python scripts:
+
+* wordvec_lstm_train_softmax.py: lstm model with softmax and categorical crossentropy objective
+* wordvec_lstm_train_sigmoid.py: lstm model with sigmoid and binary crossentropy objective
+* wordvec_cnn_train.py: cnn model with softmax and categorical crossentropy objective
+* wordvec_glove_train.py: glove word embedding layer with feed forward network model and categorical crossentropy objective
+
+## Running Web Api Server
+
 Goto keras_sentiment_analysis_web directory and run the following command:
 
 ```bash
@@ -23,6 +46,8 @@ trained classifiers:
 * Feedforward network with Glove Word Embedding
 * LSTM with binary or category cross-entropy loss function
 * Bi-directional LSTM/GRU with categorical cross-entropy loss function
+
+## Invoke Web Api
 
 To query the sentiments using web api, after the flask server is started, run the following curl POST query
 in your terminal:
