@@ -31,6 +31,9 @@ def reporthook(block_num, block_size, total_size):
 
 
 if not os.path.exists(GLOVE_MODEL):
+    if not os.path.exists('very_large_data'):
+        os.makedirs('very_large_data')
+
     print('glove file does not exist, downloading from internet')
     glove_zip = 'very_large_data/glove.6B.zip'
 
