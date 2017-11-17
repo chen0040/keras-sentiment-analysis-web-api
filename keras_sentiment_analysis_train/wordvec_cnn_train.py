@@ -6,7 +6,7 @@ from keras.layers.convolutional import Conv1D
 from keras.layers import SpatialDropout1D, GlobalMaxPool1D, Dense
 from keras.utils import np_utils
 from keras.models import Sequential
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 import numpy as np
 
 np.random.seed(42)

@@ -17,12 +17,12 @@ not required. However, if you like to tune the parameters and retrain the models
 following command to run the training:
 
 ```bash
-cd translator_train
+cd keras_sentiment_analysis_train
 python wordvec_bidirectional_lstm_train_softmax.py
 ```
 
 The above commands will train bidrectional lstm model with softmax activation on the "keras_sentiment_analysis_train/data/umich-sentiment-train.txt" 
-dataset and store the trained model in "chatbot_train/models/bidirectional_lstm_softmax_**"
+dataset and store the trained model in "keras_sentiment_analysis_train/models/bidirectional_lstm_softmax_**"
 
 If you like to train other models, you can use the same command above on another train python scripts:
 

@@ -1,7 +1,7 @@
 import numpy as np
 import collections
 import nltk
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import np_utils
 from keras.models import Sequential

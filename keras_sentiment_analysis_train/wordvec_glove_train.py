@@ -5,12 +5,52 @@ from keras.utils import np_utils
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
+import urllib.request
+import os
+import zipfile
+import sys
 
 DATA_FILE = 'data/umich-sentiment-train.txt'
 # the glove model file is not included in the git due to its file size, but can be
 # downloaded from https://nlp.stanford.edu/projects/glove/
 GLOVE_MODEL = "very_large_data/glove.6B.100d.txt"
+
+
+def reporthook(block_num, block_size, total_size):
+    read_so_far = block_num * block_size
+    if total_size > 0:
+        percent = read_so_far * 1e2 / total_size
+        s = "\r%5.1f%% %*d / %d" % (
+            percent, len(str(total_size)), read_so_far, total_size)
+        sys.stderr.write(s)
+        if read_so_far >= total_size:  # near the end
+            sys.stderr.write("\n")
+    else:  # total size is unknown
+        sys.stderr.write("read %d\n" % (read_so_far,))
+
+
+if not os.path.exists(GLOVE_MODEL):
+    print('glove file does not exist, downloading from internet')
+    glove_zip = 'very_large_data/glove.6B.zip'
+
+    if not os.path.exists(glove_zip):
+        urllib.request.urlretrieve(url='http://nlp.stanford.edu/data/glove.6B.zip', filename=glove_zip,
+                                   reporthook=reporthook)
+
+    print('unzipping glove file')
+    zip_ref = zipfile.ZipFile(glove_zip, 'r')
+    uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
+
+    extracted_size = 0
+
+    # for file in zip_ref.infolist():
+    #    extracted_size += file.file_size
+    #    print("%s %%" % (extracted_size * 100 / uncompress_size))
+    #    zip_ref.extract(file)
+
+    zip_ref.extractall('very_large_data')
+    zip_ref.close()
 
 BATCH_SIZE = 64
 NUM_EPOCHS = 20
@@ -53,7 +93,6 @@ for line in file:
 W = pad_sequences(sx, maxlen=max_len)
 Y = np_utils.to_categorical(sy, 2)
 
-
 word2em = {}
 file = open(GLOVE_MODEL, mode='rb')
 for line in file:
@@ -75,7 +114,6 @@ for i in range(W.shape[0]):
             pass
     X[i, :] = np.sum(E, axis=1)
 
-
 model = Sequential()
 model.add(Dense(units=64, activation='relu', input_dim=EMBED_SIZE))
 model.add(Dropout(0.2))
@@ -91,9 +129,3 @@ score = model.evaluate(x=Xtrain, y=Ytrain, verbose=1)
 
 print('score: ', score[0])
 print('accuracy: ', score[1])
-
-
-
-
-
-
