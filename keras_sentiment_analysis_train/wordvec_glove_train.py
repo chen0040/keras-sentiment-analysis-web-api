@@ -30,30 +30,35 @@ def reporthook(block_num, block_size, total_size):
         sys.stderr.write("read %d\n" % (read_so_far,))
 
 
-if not os.path.exists(GLOVE_MODEL):
-    if not os.path.exists('very_large_data'):
-        os.makedirs('very_large_data')
+def download_glove():
+    if not os.path.exists(GLOVE_MODEL):
+        if not os.path.exists('very_large_data'):
+            os.makedirs('very_large_data')
 
-    print('glove file does not exist, downloading from internet')
-    glove_zip = 'very_large_data/glove.6B.zip'
+        glove_zip = 'very_large_data/glove.6B.zip'
 
-    if not os.path.exists(glove_zip):
-        urllib.request.urlretrieve(url='http://nlp.stanford.edu/data/glove.6B.zip', filename=glove_zip,
-                                   reporthook=reporthook)
+        if not os.path.exists(glove_zip):
+            print('glove file does not exist, downloading from internet')
+            urllib.request.urlretrieve(url='http://nlp.stanford.edu/data/glove.6B.zip', filename=glove_zip,
+                                       reporthook=reporthook)
 
-    print('unzipping glove file')
-    zip_ref = zipfile.ZipFile(glove_zip, 'r')
-    uncompress_size = sum((file.file_size for file in zip_ref.infolist()))
+        print('unzipping glove file')
+        zip_ref = zipfile.ZipFile(glove_zip, 'r')
+        zip_ref.extractall('very_large_data')
+        zip_ref.close()
 
-    extracted_size = 0
 
-    # for file in zip_ref.infolist():
-    #    extracted_size += file.file_size
-    #    print("%s %%" % (extracted_size * 100 / uncompress_size))
-    #    zip_ref.extract(file)
+def load_glove():
+    _word2em = {}
+    file = open(GLOVE_MODEL, mode='rt', encoding='utf8')
+    for line in file:
+        words = line.strip().split()
+        word = words[0]
+        embeds = np.array(words[1:], dtype=np.float32)
+        _word2em[word] = embeds
+    file.close()
+    return _word2em
 
-    zip_ref.extractall('very_large_data')
-    zip_ref.close()
 
 BATCH_SIZE = 64
 NUM_EPOCHS = 20
@@ -72,6 +77,9 @@ for line in file:
         counter[token] += 1
     max_len = max(max_len, len(tokens))
 file.close()
+
+context = {'maxlen': max_len }
+np.save('models/umich_context_glove.npy', context)
 
 word2idx = collections.defaultdict(int)
 for idx, word in enumerate(counter.most_common(MAX_VOCAB_SIZE)):
@@ -96,14 +104,7 @@ for line in file:
 W = pad_sequences(sx, maxlen=max_len)
 Y = np_utils.to_categorical(sy, 2)
 
-word2em = {}
-file = open(GLOVE_MODEL, mode='rb')
-for line in file:
-    words = line.strip().split()
-    word = words[0]
-    embeds = np.array(words[1:], dtype=np.float32)
-    word2em[word] = embeds
-file.close()
+word2em = load_glove()
 
 X = np.zeros(shape=(W.shape[0], EMBED_SIZE))
 for i in range(W.shape[0]):
@@ -132,3 +133,7 @@ score = model.evaluate(x=Xtrain, y=Ytrain, verbose=1)
 
 print('score: ', score[0])
 print('accuracy: ', score[1])
+
+with open('models/glove_ffn_architecture.json', 'w') as file:
+    file.write(model.to_json())
+model.save_weights('models/glove_ffn_weights.h5')

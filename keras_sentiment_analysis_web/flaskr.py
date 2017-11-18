@@ -4,6 +4,7 @@ from keras_sentiment_analysis_web.wordvec_cnn_predict import WordVecCnn
 from keras_sentiment_analysis_web.wordvec_lstm_predict_sigmoid import WordVecLstmSigmoid
 from keras_sentiment_analysis_web.wordvec_lstm_predict_softmax import WordVecLstmSoftmax
 from keras_sentiment_analysis_web.wordvec_bidirectional_lstm_predict_softmax import WordVecBidirectionalLstmSoftmax
+from keras_sentiment_analysis_web.wordvec_glove_predict import WordVecGloveFFN
 
 app = Flask(__name__)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
@@ -23,6 +24,9 @@ lstm_softmax_c.test_run('i liked the Da Vinci Code a lot.')
 
 bidirectional_lstm_softmax_c = WordVecBidirectionalLstmSoftmax()
 bidirectional_lstm_softmax_c.test_run('i like the Da Vinci Code a lot.')
+
+ffn_glove_c = WordVecGloveFFN()
+ffn_glove_c.test_run('i like the Da Vinci Code a lot.')
 
 
 @app.route('/')
@@ -102,6 +106,23 @@ def bidirectional_lstm_softmax():
     return render_template('bidirectional_lstm_softmax.html')
 
 
+@app.route('/ffn_glove', methods=['POST', 'GET'])
+def ffn_glove():
+    if request.method == 'POST':
+        if 'sentence' not in request.form:
+            flash('No sentence post')
+            redirect(request.url)
+        elif request.form['sentence'] == '':
+            flash('No sentence')
+            redirect(request.url)
+        else:
+            sent = request.form['sentence']
+            sentiments = ffn_glove_c.predict(sent)
+            return render_template('ffn_glove_result.html', sentence=sent,
+                                   sentiments=sentiments)
+    return render_template('ffn_glove.html')
+
+
 @app.route('/measure_sentiments', methods=['POST', 'GET'])
 def measure_sentiment():
     if request.method == 'POST':
@@ -123,6 +144,8 @@ def measure_sentiment():
         sentiments = lstm_softmax_c.predict(sentence)
     elif network == 'lstm_bidirectional_softmax':
         sentiments = bidirectional_lstm_softmax_c.predict(sentence)
+    elif network == 'ffn_glove':
+        sentiments = ffn_glove_c.predict(sentence)
     return jsonify({
         'sentence': sentence,
         'pos_sentiment': float(str(sentiments[0])),
