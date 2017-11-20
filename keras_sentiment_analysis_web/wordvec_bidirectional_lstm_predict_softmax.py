@@ -35,7 +35,10 @@ class WordVecBidirectionalLstmSoftmax(object):
         print(result)
 
 
-if __name__ == '__main__':
+def main():
     app = WordVecBidirectionalLstmSoftmax()
     app.test_run('i liked the Da Vinci Code a lot.')
     app.test_run('I hate friday')
+
+if __name__ == '__main__':
+    main()

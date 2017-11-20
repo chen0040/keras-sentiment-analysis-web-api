@@ -14,19 +14,10 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 wordvec_cnn_classifier = WordVecCnn()
-wordvec_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')
-
 lstm_sigmoid_c = WordVecLstmSigmoid()
-lstm_sigmoid_c.test_run('i liked the Da Vinci Code a lot.')
-
 lstm_softmax_c = WordVecLstmSoftmax()
-lstm_softmax_c.test_run('i liked the Da Vinci Code a lot.')
-
 bidirectional_lstm_softmax_c = WordVecBidirectionalLstmSoftmax()
-bidirectional_lstm_softmax_c.test_run('i like the Da Vinci Code a lot.')
-
 ffn_glove_c = WordVecGloveFFN()
-ffn_glove_c.test_run('i like the Da Vinci Code a lot.')
 
 
 @app.route('/')
@@ -159,5 +150,13 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-if __name__ == '__main__':
+def main():
+    lstm_sigmoid_c.test_run('i liked the Da Vinci Code a lot.')
+    wordvec_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')
+    lstm_softmax_c.test_run('i liked the Da Vinci Code a lot.')
+    bidirectional_lstm_softmax_c.test_run('i like the Da Vinci Code a lot.')
+    ffn_glove_c.test_run('i like the Da Vinci Code a lot.')
     app.run(debug=True)
+
+if __name__ == '__main__':
+    main()
