@@ -26,6 +26,7 @@ dataset and store the trained model in "keras_sentiment_analysis_train/models/bi
 
 If you like to train other models, you can use the same command above on another train python scripts:
 
+* wordvec_cnn_lstm_train.py: cnn + lstm model with softmax and categorical crossentropy objective
 * wordvec_lstm_train_softmax.py: lstm model with softmax and categorical crossentropy objective
 * wordvec_lstm_train_sigmoid.py: lstm model with sigmoid and binary crossentropy objective
 * wordvec_cnn_train.py: cnn model with softmax and categorical crossentropy objective
@@ -43,6 +44,7 @@ Now navigate your browser to http://localhost:5000 and you can try out various p
 trained classifiers:
 
 * 1-D CNN with Word Embedding 
+* 1-D CNN + LSTM with Word Embedding
 * Feedforward network with Glove Word Embedding
 * LSTM with binary or category cross-entropy loss function
 * Bi-directional LSTM/GRU with categorical cross-entropy loss function
@@ -81,6 +83,7 @@ Here are some examples to query sentiments using some other neural network model
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"lstm_softmax", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"lstm_sigmoid", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"cnn", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
+curl -H 'Content-Type: application/json' -X POST -d '{"network":"cnn_lstm", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"ffn_glove", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 ```
 

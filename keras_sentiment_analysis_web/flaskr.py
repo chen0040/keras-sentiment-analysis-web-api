@@ -1,6 +1,7 @@
 from flask import Flask, request, send_from_directory, redirect, render_template, flash, url_for, jsonify, \
     make_response, abort
 from keras_sentiment_analysis_web.wordvec_cnn_predict import WordVecCnn
+from keras_sentiment_analysis_web.wordvec_cnn_lstm_predict import WordVecCnnLstm
 from keras_sentiment_analysis_web.wordvec_lstm_predict_sigmoid import WordVecLstmSigmoid
 from keras_sentiment_analysis_web.wordvec_lstm_predict_softmax import WordVecLstmSoftmax
 from keras_sentiment_analysis_web.wordvec_bidirectional_lstm_predict_softmax import WordVecBidirectionalLstmSoftmax
@@ -14,6 +15,7 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 wordvec_cnn_classifier = WordVecCnn()
+wordvec_cnn_lstm_classifier = WordVecCnnLstm()
 lstm_sigmoid_c = WordVecLstmSigmoid()
 lstm_softmax_c = WordVecLstmSoftmax()
 bidirectional_lstm_softmax_c = WordVecBidirectionalLstmSoftmax()
@@ -44,6 +46,21 @@ def wordvec_cnn():
             sentiments = wordvec_cnn_classifier.predict(sent)
             return render_template('wordvec_cnn_result.html', sentence=sent, sentiments=sentiments)
     return render_template('wordvec_cnn.html')
+
+@app.route('/wordvec_cnn_lstm', methods=['POST', 'GET'])
+def wordvec_cnn_lstm():
+    if request.method == 'POST':
+        if 'sentence' not in request.form:
+            flash('No sentence post')
+            redirect(request.url)
+        elif request.form['sentence'] == '':
+            flash('No sentence')
+            redirect(request.url)
+        else:
+            sent = request.form['sentence']
+            sentiments = wordvec_cnn_lstm_classifier.predict(sent)
+            return render_template('wordvec_cnn_lstm_result.html', sentence=sent, sentiments=sentiments)
+    return render_template('wordvec_cnn_lstm.html')
 
 
 @app.route('/lstm_sigmoid', methods=['POST', 'GET'])
@@ -128,6 +145,8 @@ def measure_sentiment():
     sentiments = []
     if network == 'cnn':
         sentiments = wordvec_cnn_classifier.predict(sentence)
+    elif network == 'cnn_lstm':
+        sentiments = wordvec_cnn_lstm_classifier.predict(sentence)
     elif network == 'lstm_sigmoid':
         positive_sentiment = lstm_sigmoid_c.predict(sentence)[0]
         sentiments = [positive_sentiment, 1 - positive_sentiment]
@@ -151,6 +170,7 @@ def not_found(error):
 
 
 def main():
+    wordvec_cnn_lstm_classifier.test_run('i liked the Da Vinci Code a lot.')
     lstm_sigmoid_c.test_run('i liked the Da Vinci Code a lot.')
     wordvec_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')
     lstm_softmax_c.test_run('i liked the Da Vinci Code a lot.')
