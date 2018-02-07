@@ -8,3 +8,4 @@ pillow
 scikit-learn
 tensorflow
 matplotlib
+pandas
