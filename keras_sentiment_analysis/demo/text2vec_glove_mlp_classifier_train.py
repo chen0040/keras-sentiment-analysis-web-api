@@ -1,10 +1,11 @@
 from sklearn import metrics
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
 import pandas as pd
+from sklearn.neural_network import MLPClassifier
 
 from keras_sentiment_analysis.library.glove_loader import GloveModel
 from keras_sentiment_analysis.library.plot_utils import plot_confusion_matrix
+
 
 def main():
     data_dir_path = './data'
@@ -25,7 +26,7 @@ def main():
     X_train = glove_model.encode_docs(X_train)
     X_test = glove_model.encode_docs(X_test)
 
-    clf = MultinomialNB()
+    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(64, 2), random_state=42)
 
     clf.fit(X_train, y_train)
     pred = clf.predict(X_test)
