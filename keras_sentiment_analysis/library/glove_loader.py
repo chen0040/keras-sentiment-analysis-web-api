@@ -90,7 +90,7 @@ class GloveModel(object):
         X = np.zeros(shape=(doc_count, self.embedding_dim))
         max_len = 0
         for doc in docs:
-            max_len = max(max_len, len(nltk.word_tokenize(doc)))
+            max_len = max(max_len, len([nltk.word_tokenize(doc)]))
         max_len = min(max_len, max_allowed_doc_length)
         for i in range(0, doc_count):
             doc = docs[i]
