@@ -19,7 +19,7 @@ def main():
     X = df[1].as_matrix()
 
     # Make training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=53)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
     glove_model = GloveModel()
     glove_model.load('./very_large_data')
