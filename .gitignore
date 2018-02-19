@@ -11,10 +11,6 @@ __pycache__/
 
 Thumbs.db
 
-keras_sentiment_analysis_web/uploads
-keras_sentiment_analysis_train/very_large_data
-keras_sentiment_analysis/demo/very_large_data
-
 # Distribution / packaging
 .Python
 env/
