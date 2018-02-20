@@ -1,11 +1,11 @@
 from flask import Flask, request, send_from_directory, redirect, render_template, flash, url_for, jsonify, \
     make_response, abort
-from keras_sentiment_analysis_web.wordvec_cnn_predict import WordVecCnn
-from keras_sentiment_analysis_web.wordvec_cnn_lstm_predict import WordVecCnnLstm
-from keras_sentiment_analysis_web.wordvec_lstm_predict_sigmoid import WordVecLstmSigmoid
-from keras_sentiment_analysis_web.wordvec_lstm_predict_softmax import WordVecLstmSoftmax
-from keras_sentiment_analysis_web.wordvec_bidirectional_lstm_predict_softmax import WordVecBidirectionalLstmSoftmax
-from keras_sentiment_analysis_web.wordvec_glove_predict import WordVecGloveFFN
+from keras_sentiment_analysis.library.cnn import WordVecCnn
+from keras_sentiment_analysis.library.cnn_lstm import WordVecCnnLstm
+from keras_sentiment_analysis.library.lstm import WordVecLstmSigmoid
+from keras_sentiment_analysis.library.lstm import WordVecLstmSoftmax
+from keras_sentiment_analysis.library.lstm import WordVecBidirectionalLstmSoftmax
+from keras_sentiment_analysis.library.ffn import WordVecGloveFFN
 
 app = Flask(__name__)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
@@ -46,6 +46,7 @@ def wordvec_cnn():
             sentiments = wordvec_cnn_classifier.predict(sent)
             return render_template('wordvec_cnn_result.html', sentence=sent, sentiments=sentiments)
     return render_template('wordvec_cnn.html')
+
 
 @app.route('/wordvec_cnn_lstm', methods=['POST', 'GET'])
 def wordvec_cnn_lstm():
@@ -170,13 +171,22 @@ def not_found(error):
 
 
 def main():
+    model_dir_path = '../demo/models'
+    wordvec_cnn_lstm_classifier.load_model(model_dir_path)
+    lstm_sigmoid_c.load_model(model_dir_path)
+    wordvec_cnn_classifier.load_model(model_dir_path)
+    lstm_softmax_c.load_model(model_dir_path)
+    bidirectional_lstm_softmax_c.load_model(model_dir_path)
+    ffn_glove_c.load_model(model_dir_path)
+    
     wordvec_cnn_lstm_classifier.test_run('i liked the Da Vinci Code a lot.')
     lstm_sigmoid_c.test_run('i liked the Da Vinci Code a lot.')
     wordvec_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')
     lstm_softmax_c.test_run('i liked the Da Vinci Code a lot.')
     bidirectional_lstm_softmax_c.test_run('i like the Da Vinci Code a lot.')
     ffn_glove_c.test_run('i like the Da Vinci Code a lot.')
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
+
 
 if __name__ == '__main__':
     main()
