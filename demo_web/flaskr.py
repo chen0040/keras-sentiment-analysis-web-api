@@ -158,6 +158,8 @@ def measure_sentiment():
         sentiments = bidirectional_lstm_softmax_c.predict(sentence)
     elif network == 'ffn_glove':
         sentiments = ffn_glove_c.predict(sentence)
+    elif network == 'multi_channel_cnn':
+        sentiments = wordvec_multichannel_cnn_classifier.predict(sentence)
     return jsonify({
         'sentence': sentence,
         'pos_sentiment': float(str(sentiments[0])),

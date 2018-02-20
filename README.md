@@ -84,7 +84,7 @@ If you like to train other models, you can use the same command above on another
 * [wordvec_multi_channel_cnn_train.py](demo/wordvec_multi_channel_cnn_train.py): multi-channel cnn model with softmax and categorical crossentropy objective
 * [wordvec_glove_ffn_train.py](demo/wordvec_glove_ffn_train.py): glove word embedding layer with feed forward network model and categorical crossentropy objective
 
-The figure below compare the training accuracy and validation accuracy of various models using the script [squad_compare_models](demo/squad_compare_models.py):
+The figure below compare the training accuracy and validation accuracy of various models using the script [wordvec_compare_models.py](demo/wordvec_compare_models.py):
 
 ![model-comparison](demo/models/training-history-comparison.png)
 
@@ -263,6 +263,7 @@ curl -H 'Content-Type: application/json' -X POST -d '{"network":"lstm_softmax", 
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"lstm_sigmoid", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"cnn", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"cnn_lstm", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
+curl -H 'Content-Type: application/json' -X POST -d '{"network":"multi_channel_cnn", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 curl -H 'Content-Type: application/json' -X POST -d '{"network":"ffn_glove", "sentence":"i like the Da Vinci Code a lot."}' http://localhost:5000/measure_sentiments
 ```
 
