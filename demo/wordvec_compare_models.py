@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 def main():
     model_dir_path = './models'
-    models = ['lstm_sigmoid', 'lstm_softmax', 'bidrectional_lstm_softmax', 'wordvec_cnn', 'wordvec_cnn_lstm', 'glove_ffn']
+    models = ['lstm_sigmoid', 'lstm_softmax', 'bidirectional_lstm_softmax', 'wordvec_cnn', 'wordvec_multi_channel_cnn', 'wordvec_cnn_lstm', 'glove_ffn']
     acc_cmp = dict()
     val_acc_cmp = dict()
     labels = list()
