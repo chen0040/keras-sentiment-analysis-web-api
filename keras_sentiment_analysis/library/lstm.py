@@ -77,6 +77,8 @@ class WordVecLstmSigmoid(object):
         self.vocab_size = self.config['vocab_size']
         self.labels = self.config['labels']
 
+        np.save(self.get_config_file_path(model_dir_path), self.config)
+
         self.create_model()
         json = self.model.to_json()
         open(self.get_architecture_file_path(model_dir_path), 'w').write(json)
@@ -200,6 +202,8 @@ class WordVecLstmSoftmax(object):
         self.vocab_size = self.config['vocab_size']
         self.labels = self.config['labels']
 
+        np.save(self.get_config_file_path(model_dir_path), self.config)
+
         self.create_model()
         json = self.model.to_json()
         open(self.get_architecture_file_path(model_dir_path), 'w').write(json)
@@ -322,6 +326,8 @@ class WordVecBidirectionalLstmSoftmax(object):
         self.max_len = self.config['max_len']
         self.vocab_size = self.config['vocab_size']
         self.labels = self.config['labels']
+
+        np.save(self.get_config_file_path(model_dir_path), self.config)
 
         self.create_model()
         json = self.model.to_json()

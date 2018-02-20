@@ -76,6 +76,7 @@ class WordVecCnn(object):
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
         output = self.model.predict(x)
+        print(output)
         return output[0]
 
     def fit(self, text_data_model, text_label_pairs, model_dir_path, batch_size=None, epochs=None,
@@ -95,6 +96,8 @@ class WordVecCnn(object):
         self.max_len = self.config['max_len']
         self.vocab_size = self.config['vocab_size']
         self.labels = self.config['labels']
+
+        np.save(self.get_config_file_path(model_dir_path), self.config)
 
         self.create_model()
         json = self.model.to_json()
