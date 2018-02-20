@@ -51,11 +51,11 @@ class WordVecLstmSigmoid(object):
 
     def create_model(self):
         embedding_size = 100
-        model = Sequential()
-        model.add(Embedding(input_dim=self.vocab_size, output_dim=embedding_size, input_length=self.max_len))
-        model.add(SpatialDropout1D(0.2))
-        model.add(LSTM(units=64, dropout=0.2, recurrent_dropout=0.2))
-        model.add(Dense(1, activation='sigmoid'))
+        self.model = Sequential()
+        self.model.add(Embedding(input_dim=self.vocab_size, output_dim=embedding_size, input_length=self.max_len))
+        self.model.add(SpatialDropout1D(0.2))
+        self.model.add(LSTM(units=64, dropout=0.2, recurrent_dropout=0.2))
+        self.model.add(Dense(1, activation='sigmoid'))
 
         self.model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
@@ -95,7 +95,8 @@ class WordVecLstmSigmoid(object):
             ys.append(self.labels[label])
 
         X = pad_sequences(xs, maxlen=self.max_len)
-        Y = np_utils.to_categorical(ys, len(self.labels))
+        # Y = np_utils.to_categorical(ys, len(self.labels))
+        Y = np.array(ys, dtype=np.float32)
 
         x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=test_size, random_state=random_state)
         print(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
