@@ -1,6 +1,6 @@
 from flask import Flask, request, send_from_directory, redirect, render_template, flash, url_for, jsonify, \
     make_response, abort
-from keras_sentiment_analysis.library.cnn import WordVecCnn
+from keras_sentiment_analysis.library.cnn import WordVecCnn, WordVecMultiChannelCnn
 from keras_sentiment_analysis.library.cnn_lstm import WordVecCnnLstm
 from keras_sentiment_analysis.library.lstm import WordVecLstmSigmoid
 from keras_sentiment_analysis.library.lstm import WordVecLstmSoftmax
@@ -15,6 +15,7 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 wordvec_cnn_classifier = WordVecCnn()
+wordvec_multichannel_cnn_classifier = WordVecMultiChannelCnn()
 wordvec_cnn_lstm_classifier = WordVecCnnLstm()
 lstm_sigmoid_c = WordVecLstmSigmoid()
 lstm_softmax_c = WordVecLstmSoftmax()
@@ -172,14 +173,18 @@ def not_found(error):
 
 def main():
     model_dir_path = '../demo/models'
+
+    wordvec_multichannel_cnn_classifier.load_model(model_dir_path)
     wordvec_cnn_lstm_classifier.load_model(model_dir_path)
     lstm_sigmoid_c.load_model(model_dir_path)
     wordvec_cnn_classifier.load_model(model_dir_path)
     lstm_softmax_c.load_model(model_dir_path)
     bidirectional_lstm_softmax_c.load_model(model_dir_path)
+
     ffn_glove_c.load_glove_model('../demo/very_large_data')
     ffn_glove_c.load_model(model_dir_path)
-    
+
+    wordvec_multichannel_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')
     wordvec_cnn_lstm_classifier.test_run('i liked the Da Vinci Code a lot.')
     lstm_sigmoid_c.test_run('i liked the Da Vinci Code a lot.')
     wordvec_cnn_classifier.test_run('i liked the Da Vinci Code a lot.')

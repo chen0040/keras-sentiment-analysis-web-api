@@ -152,7 +152,6 @@ class WordVecMultiChannelCnn(object):
     model_name = 'wordvec_multi_channel_cnn'
 
     def __init__(self):
-        self.loss_function = 'categorical_crossentropy'
         self.model = None
         self.config = None
         self.word2idx = None
@@ -187,13 +186,10 @@ class WordVecMultiChannelCnn(object):
         self.labels = self.config['labels']
 
         max_input_tokens = len(self.word2idx)
-        self.model = self.efine_model(self.max_len, max_input_tokens)
+        self.model = self.define_model(self.max_len, max_input_tokens)
         self.model.load_weights(self.get_weight_file_path(model_dir_path))
-        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    def define_model(self, length, vocab_size, loss_function=None):
-        if loss_function is not None:
-            self.loss_function = loss_function
+    def define_model(self, length, vocab_size):
 
         embedding_size = 100
         cnn_filter_size = 32
@@ -226,18 +222,16 @@ class WordVecMultiChannelCnn(object):
         # interpretation
         dense1 = Dense(10, activation='relu')(merged)
 
-        if loss_function == 'binary_crossentropy':
-            outputs = Dense(1, activation='sigmoid')(dense1)
-        else:
-            outputs = Dense(1, activation='softmax')(dense1)
+        outputs = Dense(units=len(self.labels), activation='softmax')(dense1)
+
         model = Model(inputs=[inputs1, inputs2, inputs3], outputs=outputs)
         # compile
-        model.compile(loss=self.loss_function, optimizer='adam', metrics=['accuracy'])
+        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         # summarize
         print(model.summary())
         return model
 
-    def fit(self, text_data_model, text_label_pairs, model_dir_path, loss_function=None,
+    def fit(self, text_data_model, text_label_pairs, model_dir_path,
             test_size=None, random_state=None,
             epochs=None, batch_size=None):
         if epochs is None:
@@ -262,7 +256,7 @@ class WordVecMultiChannelCnn(object):
         np.save(config_file_path, text_data_model)
 
         max_input_tokens = len(self.word2idx)
-        self.model = self.define_model(self.max_len, max_input_tokens, loss_function)
+        self.model = self.define_model(self.max_len, max_input_tokens)
         open(self.get_architecture_file_path(model_dir_path), 'wt').write(self.model.to_json())
 
         xs = []
@@ -300,10 +294,13 @@ class WordVecMultiChannelCnn(object):
         wid = [self.word2idx[token] if token in self.word2idx else len(self.word2idx) for token in tokens]
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
-        output = self.model.predict(x)
+        output = self.model.predict([x, x, x])
         return output[0]
 
     def predict_class(self, sentence):
         predicted = self.predict(sentence)
         idx2label = dict([(idx, label) for label, idx in self.labels.items()])
         return idx2label[np.argmax(predicted)]
+
+    def test_run(self, sentence):
+        print(self.predict(sentence))
