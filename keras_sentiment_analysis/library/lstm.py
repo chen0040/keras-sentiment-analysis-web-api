@@ -127,8 +127,8 @@ class WordVecLstmSigmoid(object):
         wid = [self.word2idx[token] if token in self.word2idx else 1 for token in tokens]
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
-        output = self.model.predict(x)
-        return [output[0], 1 - output[0]]
+        output = self.model.predict(x)[0]
+        return [1-output[0], output[0]]
 
     def predict_class(self, sentence):
         predicted = self.predict(sentence)
