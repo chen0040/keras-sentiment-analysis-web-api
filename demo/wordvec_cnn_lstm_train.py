@@ -1,6 +1,6 @@
 import numpy as np
 
-from keras_sentiment_analysis.library.cnn import WordVecCnn
+from keras_sentiment_analysis.library.cnn_lstm import WordVecCnnLstm
 from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
 from keras_sentiment_analysis.library.utility.text_fit import fit_text
 
@@ -14,7 +14,7 @@ def main():
     text_data_model = fit_text(data_file_path)
     text_label_pairs = load_text_label_pairs(data_file_path)
 
-    classifier = WordVecCnn()
+    classifier = WordVecCnnLstm()
     batch_size = 64
     epochs = 20
     history = classifier.fit(text_data_model=text_data_model,

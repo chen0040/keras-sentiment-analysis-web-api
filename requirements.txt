@@ -6,6 +6,6 @@ nltk
 h5py
 pillow
 scikit-learn
-tensorflow
+tensorflow-gpu
 matplotlib
 pandas

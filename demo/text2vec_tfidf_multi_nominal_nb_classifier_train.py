@@ -3,7 +3,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
-from keras_sentiment_analysis.library.plot_utils import plot_confusion_matrix, most_informative_feature_for_binary_classification
+from keras_sentiment_analysis.library.utility.plot_utils import plot_confusion_matrix, most_informative_feature_for_binary_classification
 
 
 def main():

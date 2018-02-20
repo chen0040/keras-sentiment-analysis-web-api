@@ -1,4 +1,3 @@
-import nltk
 from keras.models import Model, model_from_json, Sequential
 from keras.layers import Input, SpatialDropout1D, GlobalMaxPool1D
 from keras.layers import Dense
@@ -15,6 +14,8 @@ import os
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
+
+from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 
 
 class WordVecCnn(object):
@@ -51,13 +52,11 @@ class WordVecCnn(object):
 
         self.config = np.load(config_file_path).item()
 
-        self.word2idx = self.config['idx2word']
-        self.idx2word = self.config['word2idx']
+        self.idx2word = self.config['idx2word']
+        self.word2idx = self.config['word2idx']
         self.max_len = self.config['max_len']
         self.vocab_size = self.config['vocab_size']
         self.labels = self.config['labels']
-
-        self.create_model()
 
     def create_model(self):
         embedding_size = 100
@@ -72,7 +71,7 @@ class WordVecCnn(object):
 
     def predict(self, sentence):
         xs = []
-        tokens = [w.lower() for w in nltk.word_tokenize(sentence)]
+        tokens = [w.lower() for w in word_tokenize(sentence)]
         wid = [self.word2idx[token] if token in self.word2idx else len(self.word2idx) for token in tokens]
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
@@ -91,8 +90,8 @@ class WordVecCnn(object):
             random_state = 42
 
         self.config = text_data_model
-        self.word2idx = self.config['idx2word']
-        self.idx2word = self.config['word2idx']
+        self.idx2word = self.config['idx2word']
+        self.word2idx = self.config['word2idx']
         self.max_len = self.config['max_len']
         self.vocab_size = self.config['vocab_size']
         self.labels = self.config['labels']
@@ -104,9 +103,14 @@ class WordVecCnn(object):
         xs = []
         ys = []
         for text, label in text_label_pairs:
-            tokens = [x.lower() for x in nltk.word_tokenize(text)]
-            wid = [self.word2idx[w] for w in tokens]
-            xs.append(wid)
+            tokens = [x.lower() for x in word_tokenize(text)]
+            wid_list = list()
+            for w in tokens:
+                wid = 0
+                if w in self.word2idx:
+                    wid = self.word2idx[w]
+                wid_list.append(wid)
+            xs.append(wid_list)
             ys.append(self.labels[label])
 
         X = pad_sequences(xs, maxlen=self.max_len)
@@ -120,7 +124,7 @@ class WordVecCnn(object):
         checkpoint = ModelCheckpoint(weight_file_path)
 
         history = self.model.fit(x=x_train, y=y_train, batch_size=batch_size, epochs=epochs,
-                                 validation_data=[x_test, y_test], callback=[checkpoint],
+                                 validation_data=[x_test, y_test], callbacks=[checkpoint],
                                  verbose=1)
 
         self.model.save_weights(weight_file_path)

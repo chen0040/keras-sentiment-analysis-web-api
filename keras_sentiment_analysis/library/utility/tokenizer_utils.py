@@ -1,5 +1,6 @@
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
+import nltk
 
 
 # fit a tokenizer
@@ -12,6 +13,10 @@ def create_tokenizer(lines):
 # calculate the maximum document length
 def max_length(lines):
     return max([len(s.split()) for s in lines])
+
+
+def word_tokenize(line):
+    return nltk.word_tokenize(line)
 
 
 # encode a list of lines

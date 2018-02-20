@@ -3,8 +3,8 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
 
-from keras_sentiment_analysis.library.glove_loader import GloveModel
-from keras_sentiment_analysis.library.plot_utils import plot_confusion_matrix
+from keras_sentiment_analysis.library.utility.glove_loader import GloveModel
+from keras_sentiment_analysis.library.utility.plot_utils import plot_confusion_matrix
 
 
 def main():

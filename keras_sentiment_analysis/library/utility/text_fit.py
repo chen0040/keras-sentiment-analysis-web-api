@@ -1,6 +1,6 @@
 import collections
 
-import nltk
+from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 
 
 def fit_text(data_file_path, max_vocab_size=None):
@@ -13,7 +13,7 @@ def fit_text(data_file_path, max_vocab_size=None):
     labels = dict()
     for line in file:
         label, sentence = line.strip().split('\t')
-        tokens = [x.lower() for x in nltk.word_tokenize(sentence)]
+        tokens = [x.lower() for x in word_tokenize(sentence)]
         for token in tokens:
             counter[token] += 1
         max_len = max(max_len, len(tokens))
