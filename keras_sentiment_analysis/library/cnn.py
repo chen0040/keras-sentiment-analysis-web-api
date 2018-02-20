@@ -65,7 +65,7 @@ class WordVecCnn(object):
         self.model.add(SpatialDropout1D(0.2))
         self.model.add(Conv1D(filters=256, kernel_size=5, padding='same', activation='relu'))
         self.model.add(GlobalMaxPool1D())
-        self.model.add(Dense(units=2, activation='softmax'))
+        self.model.add(Dense(units=len(self.labels), activation='softmax'))
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -142,16 +142,18 @@ class WordVecCnn(object):
 
 
 class MultiChannelCNNSentimentClassifier(object):
-    EMBEDDING_SIZE = 100
-    CNN_FILTER_SIZE = 32
     model_name = 'multi-channel-cnn'
 
     def __init__(self):
         self.loss_function = 'binary_crossentropy'
         self.model = None
         self.config = None
-        self.max_input_tokens = None
-        self.max_input_seq_length = None
+        self.word2idx = None
+        self.idx2word = None
+        self.max_len = None
+        self.config = None
+        self.vocab_size = None
+        self.labels = None
 
     @staticmethod
     def get_weight_file_path(model_dir_path):
@@ -169,25 +171,28 @@ class MultiChannelCNNSentimentClassifier(object):
         if loss_function is not None:
             self.loss_function = loss_function
 
+        embedding_size = 100
+        cnn_filter_size = 32
+
         inputs1 = Input(shape=(length,))
-        embedding1 = Embedding(vocab_size, MultiChannelCNNSentimentClassifier.EMBEDDING_SIZE)(inputs1)
-        conv1 = Conv1D(filters=MultiChannelCNNSentimentClassifier.CNN_FILTER_SIZE, kernel_size=4, activation='relu')(
+        embedding1 = Embedding(vocab_size, embedding_size)(inputs1)
+        conv1 = Conv1D(filters=cnn_filter_size, kernel_size=4, activation='relu')(
             embedding1)
         drop1 = Dropout(0.5)(conv1)
         pool1 = MaxPooling1D(pool_size=2)(drop1)
         flat1 = Flatten()(pool1)
 
         inputs2 = Input(shape=(length,))
-        embedding2 = Embedding(vocab_size, MultiChannelCNNSentimentClassifier.EMBEDDING_SIZE)(inputs2)
-        conv2 = Conv1D(filters=MultiChannelCNNSentimentClassifier.CNN_FILTER_SIZE, kernel_size=6, activation='relu')(
+        embedding2 = Embedding(vocab_size, embedding_size)(inputs2)
+        conv2 = Conv1D(filters=cnn_filter_size, kernel_size=6, activation='relu')(
             embedding2)
         drop2 = Dropout(0.5)(conv2)
         pool2 = MaxPooling1D(pool_size=2)(drop2)
         flat2 = Flatten()(pool2)
 
         inputs3 = Input(shape=(length,))
-        embedding3 = Embedding(vocab_size, MultiChannelCNNSentimentClassifier.EMBEDDING_SIZE)(inputs3)
-        conv3 = Conv1D(filters=MultiChannelCNNSentimentClassifier.CNN_FILTER_SIZE, kernel_size=8, activation='relu')(
+        embedding3 = Embedding(vocab_size, embedding_size)(inputs3)
+        conv3 = Conv1D(filters=cnn_filter_size, kernel_size=8, activation='relu')(
             embedding3)
         drop3 = Dropout(0.5)(conv3)
         pool3 = MaxPooling1D(pool_size=2)(drop3)
@@ -200,7 +205,7 @@ class MultiChannelCNNSentimentClassifier(object):
         if loss_function == 'binary_crossentropy':
             outputs = Dense(1, activation='sigmoid')(dense1)
         else:
-            outputs = Dense(1, activation='sigmoid')(dense1)
+            outputs = Dense(1, activation='softmax')(dense1)
         model = Model(inputs=[inputs1, inputs2, inputs3], outputs=outputs)
         # compile
         model.compile(loss=self.loss_function, optimizer='adam', metrics=['accuracy'])
@@ -208,26 +213,57 @@ class MultiChannelCNNSentimentClassifier(object):
         print(model.summary())
         return model
 
-    def fit(self, text_data_model, trainX, trainY, model_dir_path, loss_function=None, epochs=None, batch_size=None):
+    def fit(self, text_data_model, text_label_pairs, model_dir_path, loss_function=None,
+            test_size=None, random_state=None,
+            epochs=None, batch_size=None):
         if epochs is None:
             epochs = 10
         if batch_size is None:
             batch_size = 16
+        if test_size is None:
+            test_size = 0.3
+        if random_state is None:
+            random_state = 42
+
         self.config = text_data_model
-        self.max_input_tokens = text_data_model['max_input_tokens']
-        self.max_input_seq_length = text_data_model['max_input_seq_length']
+        self.idx2word = self.config['idx2word']
+        self.word2idx = self.config['word2idx']
+        self.max_len = self.config['max_len']
+        self.vocab_size = self.config['vocab_size']
+        self.labels = self.config['labels']
 
         verbose = 1
 
         config_file_path = MultiChannelCNNSentimentClassifier.get_config_file_path(model_dir_path)
         np.save(config_file_path, text_data_model)
 
-        model = self.define_model(self.max_input_seq_length, self.max_input_tokens, loss_function)
+        max_input_tokens = len(self.word2idx)
+        self.model = self.define_model(self.max_len, max_input_tokens, loss_function)
+        open(self.get_architecture_file_path(model_dir_path), 'wt').write(self.model.to_json())
+
+        xs = []
+        ys = []
+        for text, label in text_label_pairs:
+            tokens = [x.lower() for x in word_tokenize(text)]
+            wid_list = list()
+            for w in tokens:
+                wid = 0
+                if w in self.word2idx:
+                    wid = self.word2idx[w]
+                wid_list.append(wid)
+            xs.append(wid_list)
+            ys.append(self.labels[label])
+
+        X = pad_sequences(xs, maxlen=self.max_len)
+        Y = np_utils.to_categorical(ys, len(self.labels))
 
         weight_file_path = MultiChannelCNNSentimentClassifier.get_weight_file_path(model_dir_path)
         checkpoint = ModelCheckpoint(weight_file_path)
 
-        model.fit([trainX, trainX, trainX], trainY, epochs=epochs, batch_size=batch_size, validation_split=0.2,
-                  verbose=verbose, callbacks=[checkpoint])
+        history = self.model.fit([X, X, X], Y, epochs=epochs, batch_size=batch_size,
+                                 validation_split=test_size,
+                                 verbose=verbose, callbacks=[checkpoint])
         # save the model
-        model.save(weight_file_path)
+        self.model.save(weight_file_path)
+
+        return history

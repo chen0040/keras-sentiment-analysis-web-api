@@ -57,7 +57,7 @@ class WordVecCnnLstm(object):
         self.model.add(Conv1D(filters=256, kernel_size=5, padding='same', activation='relu'))
         self.model.add(MaxPooling1D(pool_size=4))
         self.model.add(LSTM(lstm_output_size))
-        self.model.add(Dense(units=2, activation='softmax'))
+        self.model.add(Dense(units=len(self.labels), activation='softmax'))
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
