@@ -128,7 +128,12 @@ class WordVecLstmSigmoid(object):
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
         output = self.model.predict(x)
-        return output[0]
+        return [output[0], 1 - output[0]]
+
+    def predict_class(self, sentence):
+        predicted = self.predict(sentence)
+        idx2label = dict([(idx, label) for label, idx in self.labels.items()])
+        return idx2label[np.argmax(predicted)]
 
     def test_run(self, sentence):
         print(self.predict(sentence))
@@ -254,6 +259,11 @@ class WordVecLstmSoftmax(object):
         output = self.model.predict(x)
         return output[0]
 
+    def predict_class(self, sentence):
+        predicted = self.predict(sentence)
+        idx2label = dict([(idx, label) for label, idx in self.labels.items()])
+        return idx2label[np.argmax(predicted)]
+
     def test_run(self, sentence):
         print(self.predict(sentence))
         
@@ -378,6 +388,11 @@ class WordVecBidirectionalLstmSoftmax(object):
         x = pad_sequences(xs, self.max_len)
         output = self.model.predict(x)
         return output[0]
+
+    def predict_class(self, sentence):
+        predicted = self.predict(sentence)
+        idx2label = dict([(idx, label) for label, idx in self.labels.items()])
+        return idx2label[np.argmax(predicted)]
 
     def test_run(self, sentence):
         print(self.predict(sentence))

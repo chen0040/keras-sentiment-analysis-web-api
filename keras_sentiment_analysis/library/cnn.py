@@ -76,8 +76,12 @@ class WordVecCnn(object):
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
         output = self.model.predict(x)
-        print(output)
         return output[0]
+
+    def predict_class(self, sentence):
+        predicted = self.predict(sentence)
+        idx2label = dict([(idx, label) for label, idx in self.labels.items()])
+        return idx2label[np.argmax(predicted)]
 
     def fit(self, text_data_model, text_label_pairs, model_dir_path, batch_size=None, epochs=None,
             test_size=None, random_state=None):
@@ -289,3 +293,17 @@ class WordVecMultiChannelCnn(object):
         np.save(model_dir_path + '/' + WordVecMultiChannelCnn.model_name + '-history.npy', history.history)
 
         return history
+
+    def predict(self, sentence):
+        xs = []
+        tokens = [w.lower() for w in word_tokenize(sentence)]
+        wid = [self.word2idx[token] if token in self.word2idx else len(self.word2idx) for token in tokens]
+        xs.append(wid)
+        x = pad_sequences(xs, self.max_len)
+        output = self.model.predict(x)
+        return output[0]
+
+    def predict_class(self, sentence):
+        predicted = self.predict(sentence)
+        idx2label = dict([(idx, label) for label, idx in self.labels.items()])
+        return idx2label[np.argmax(predicted)]

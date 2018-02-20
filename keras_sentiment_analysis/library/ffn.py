@@ -137,8 +137,12 @@ class WordVecGloveFFN(object):
                 pass
         X[0, :] = np.sum(E, axis=1)
         output = self.model.predict(X)
-        negative, positive = output[0]
-        return [positive, negative]
+        return output[0]
+
+    def predict_class(self, sentence):
+        predicted = self.predict(sentence)
+        idx2label = dict([(idx, label) for label, idx in self.labels.items()])
+        return idx2label[np.argmax(predicted)]
 
     def test_run(self, sentence):
         print(self.predict(sentence))

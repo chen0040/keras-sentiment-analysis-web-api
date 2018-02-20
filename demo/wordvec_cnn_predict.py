@@ -21,7 +21,8 @@ def main():
 
     for i in range(20):
         text, label = text_label_pairs[i]
-        predicted_label = classifier.predict(text)
+        print('Output: ', classifier.predict(sentence=text))
+        predicted_label = classifier.predict_class(text)
         print('Sentence: ', text)
         print('Predicted: ', predicted_label, 'Actual: ', label)
 
