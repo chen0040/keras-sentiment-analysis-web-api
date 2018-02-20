@@ -75,9 +75,9 @@ def lstm_sigmoid():
             redirect(request.url)
         else:
             sent = request.form['sentence']
-            positive_sentiment = lstm_sigmoid_c.predict(sent)
+            positive_sentiment, negative_sentiment = lstm_sigmoid_c.predict(sent)
             return render_template('lstm_sigmoid_result.html', sentence=sent,
-                                   sentiments=[positive_sentiment, 1 - positive_sentiment])
+                                   sentiments=[positive_sentiment, negative_sentiment])
     return render_template('lstm_sigmoid.html')
 
 
@@ -177,6 +177,7 @@ def main():
     wordvec_cnn_classifier.load_model(model_dir_path)
     lstm_softmax_c.load_model(model_dir_path)
     bidirectional_lstm_softmax_c.load_model(model_dir_path)
+    ffn_glove_c.load_glove_model('../demo/very_large_data')
     ffn_glove_c.load_model(model_dir_path)
     
     wordvec_cnn_lstm_classifier.test_run('i liked the Da Vinci Code a lot.')
