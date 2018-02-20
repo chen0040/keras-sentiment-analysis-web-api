@@ -1,15 +1,16 @@
 from keras.callbacks import ModelCheckpoint
-from keras.layers import Embedding, SpatialDropout1D, Conv1D, MaxPooling1D, LSTM, Dense
+from keras.layers import Embedding, SpatialDropout1D, LSTM, Dense
 from keras.models import model_from_json, Sequential
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
-from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 
+from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 
-class WordVecCnnLstm(object):
-    model_name = 'wordvec_cnn_lstm'
+
+class WordVecLstmSigmoid(object):
+    model_name = 'lstm_sigmoid'
 
     def __init__(self):
         self.model = None
@@ -22,15 +23,15 @@ class WordVecCnnLstm(object):
 
     @staticmethod
     def get_architecture_file_path(model_dir_path):
-        return model_dir_path + '/' + WordVecCnnLstm.model_name + '_architecture.json'
+        return model_dir_path + '/' + WordVecLstmSigmoid.model_name + '_architecture.json'
 
     @staticmethod
     def get_weight_file_path(model_dir_path):
-        return model_dir_path + '/' + WordVecCnnLstm.model_name + '_weights.h5'
+        return model_dir_path + '/' + WordVecLstmSigmoid.model_name + '_weights.h5'
 
     @staticmethod
     def get_config_file_path(model_dir_path):
-        return model_dir_path + '/' + WordVecCnnLstm.model_name + '_config.npy'
+        return model_dir_path + '/' + WordVecLstmSigmoid.model_name + '_config.npy'
 
     def load_model(self, model_dir_path):
         json = open(self.get_architecture_file_path(model_dir_path), 'r').read()
@@ -49,17 +50,14 @@ class WordVecCnnLstm(object):
         self.labels = self.config['labels']
 
     def create_model(self):
-        lstm_output_size = 70
         embedding_size = 100
-        self.model = Sequential()
-        self.model.add(Embedding(input_dim=self.vocab_size, input_length=self.max_len, output_dim=embedding_size))
-        self.model.add(SpatialDropout1D(0.2))
-        self.model.add(Conv1D(filters=256, kernel_size=5, padding='same', activation='relu'))
-        self.model.add(MaxPooling1D(pool_size=4))
-        self.model.add(LSTM(lstm_output_size))
-        self.model.add(Dense(units=2, activation='softmax'))
+        model = Sequential()
+        model.add(Embedding(input_dim=self.vocab_size, output_dim=embedding_size, input_length=self.max_len))
+        model.add(SpatialDropout1D(0.2))
+        model.add(LSTM(units=64, dropout=0.2, recurrent_dropout=0.2))
+        model.add(Dense(1, activation='sigmoid'))
 
-        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
     def fit(self, text_data_model, text_label_pairs, model_dir_path, batch_size=None, epochs=None,
             test_size=None, random_state=None):
@@ -112,7 +110,7 @@ class WordVecCnnLstm(object):
 
         self.model.save_weights(weight_file_path)
 
-        np.save(model_dir_path + '/' + WordVecCnnLstm.model_name + '-history.npy', history.history)
+        np.save(model_dir_path + '/' + WordVecLstmSigmoid.model_name + '-history.npy', history.history)
 
         score = self.model.evaluate(x=x_test, y=y_test, batch_size=batch_size, verbose=1)
         print('score: ', score[0])
@@ -123,7 +121,7 @@ class WordVecCnnLstm(object):
     def predict(self, sentence):
         xs = []
         tokens = [w.lower() for w in word_tokenize(sentence)]
-        wid = [self.word2idx[token] if token in self.word2idx else len(self.word2idx) for token in tokens]
+        wid = [self.word2idx[token] if token in self.word2idx else 1 for token in tokens]
         xs.append(wid)
         x = pad_sequences(xs, self.max_len)
         output = self.model.predict(x)
@@ -134,7 +132,7 @@ class WordVecCnnLstm(object):
 
 
 def main():
-    app = WordVecCnnLstm()
+    app = WordVecLstmSigmoid()
     app.test_run('i liked the Da Vinci Code a lot.')
 
 
