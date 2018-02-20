@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(
-    name='keras_sentiment_analysis_web',
-    packages=['keras_sentiment_analysis_web'],
+    name='keras_sentiment_analysis',
+    packages=['keras_sentiment_analysis'],
     include_package_data=True,
     install_requires=[
         'flask',

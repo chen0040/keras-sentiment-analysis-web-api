@@ -141,11 +141,11 @@ class WordVecCnn(object):
         print(self.predict(sentence))
 
 
-class MultiChannelCNNSentimentClassifier(object):
-    model_name = 'multi-channel-cnn'
+class WordVecMultiChannelCnn(object):
+    model_name = 'wordvec_multi_channel_cnn'
 
     def __init__(self):
-        self.loss_function = 'binary_crossentropy'
+        self.loss_function = 'categorical_crossentropy'
         self.model = None
         self.config = None
         self.word2idx = None
@@ -157,15 +157,32 @@ class MultiChannelCNNSentimentClassifier(object):
 
     @staticmethod
     def get_weight_file_path(model_dir_path):
-        return model_dir_path + os.path.sep + MultiChannelCNNSentimentClassifier.model_name + '-weights.h5'
+        return model_dir_path + os.path.sep + WordVecMultiChannelCnn.model_name + '_weights.h5'
 
     @staticmethod
     def get_config_file_path(model_dir_path):
-        return model_dir_path + os.path.sep + MultiChannelCNNSentimentClassifier.model_name + '-config.npy'
+        return model_dir_path + os.path.sep + WordVecMultiChannelCnn.model_name + '_config.npy'
 
     @staticmethod
     def get_architecture_file_path(model_dir_path):
-        return model_dir_path + os.path.sep + MultiChannelCNNSentimentClassifier.model_name + '-architecture.npy'
+        return model_dir_path + os.path.sep + WordVecMultiChannelCnn.model_name + '_architecture.npy'
+
+    def load_model(self, model_dir_path):
+
+        config_file_path = self.get_config_file_path(model_dir_path)
+
+        self.config = np.load(config_file_path).item()
+
+        self.idx2word = self.config['idx2word']
+        self.word2idx = self.config['word2idx']
+        self.max_len = self.config['max_len']
+        self.vocab_size = self.config['vocab_size']
+        self.labels = self.config['labels']
+
+        max_input_tokens = len(self.word2idx)
+        self.model = self.efine_model(self.max_len, max_input_tokens)
+        self.model.load_weights(self.get_weight_file_path(model_dir_path))
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     def define_model(self, length, vocab_size, loss_function=None):
         if loss_function is not None:
@@ -234,7 +251,7 @@ class MultiChannelCNNSentimentClassifier(object):
 
         verbose = 1
 
-        config_file_path = MultiChannelCNNSentimentClassifier.get_config_file_path(model_dir_path)
+        config_file_path = WordVecMultiChannelCnn.get_config_file_path(model_dir_path)
         np.save(config_file_path, text_data_model)
 
         max_input_tokens = len(self.word2idx)
@@ -257,7 +274,7 @@ class MultiChannelCNNSentimentClassifier(object):
         X = pad_sequences(xs, maxlen=self.max_len)
         Y = np_utils.to_categorical(ys, len(self.labels))
 
-        weight_file_path = MultiChannelCNNSentimentClassifier.get_weight_file_path(model_dir_path)
+        weight_file_path = WordVecMultiChannelCnn.get_weight_file_path(model_dir_path)
         checkpoint = ModelCheckpoint(weight_file_path)
 
         history = self.model.fit([X, X, X], Y, epochs=epochs, batch_size=batch_size,
@@ -265,5 +282,7 @@ class MultiChannelCNNSentimentClassifier(object):
                                  verbose=verbose, callbacks=[checkpoint])
         # save the model
         self.model.save(weight_file_path)
+
+        np.save(model_dir_path + '/' + WordVecMultiChannelCnn.model_name + '-history.npy', history.history)
 
         return history
