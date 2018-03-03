@@ -276,6 +276,27 @@ currently CUDA® Toolkit 9.1 is not yet supported by tensorflow, therefore you s
 * Step 3: Download and unzip the [cuDNN 7.4 for CUDA@ Toolkit 9.0](https://developer.nvidia.com/cudnn) and add the
 bin folder of the unzipped directory to the $PATH of your Windows environment 
 
+### Export trained model as tensorflow pb model file
+
+To export the trained keras model as tensorflow graph model file, run the following command:
+
+```bash
+cd demo
+python models_tensorflow_export_model.py
+```
+
+The script [demo/models_tensorflow_export_model.py](demo/models_tensorflow_export_model.py) export the trained model
+as [demo/mdoels/tf/***.pb](demo/models/tf) 
+
+To test the exported tensorflow graph model file, run the following command:
+
+```bash
+cd demo
+python cnn_lstm_tensorflow_classifier.py
+```
+
+The script [demo/cnn_lstm_tensorflow_classifier.py](demo/cnn_lstm_tensorflow_classifier.py) uses pure tensorflow code
+to load the [wordvec_cnn_lstm.pb](demo/models/tf/wordvec_cnn_lstm.pb) and uses it to predict sentiment of the message
 
 
 

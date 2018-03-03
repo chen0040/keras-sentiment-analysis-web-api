@@ -5,6 +5,7 @@ import numpy as np
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 
+from keras_sentiment_analysis.library.utility.export_keras_to_tensorflow_model import export_keras_to_tensorflow
 from keras_sentiment_analysis.library.utility.glove_loader import GloveModel
 from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 
@@ -146,6 +147,9 @@ class WordVecGloveFFN(object):
 
     def test_run(self, sentence):
         print(self.predict(sentence))
+
+    def export_tensorflow_model(self, output_fld):
+        export_keras_to_tensorflow(self.model, output_fld, output_model_file=WordVecGloveFFN.model_name + '.pb')
 
 
 def main():

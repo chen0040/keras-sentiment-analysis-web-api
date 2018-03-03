@@ -3,6 +3,8 @@ from keras.layers import Embedding, SpatialDropout1D, Conv1D, MaxPooling1D, LSTM
 from keras.models import model_from_json, Sequential
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
+
+from keras_sentiment_analysis.library.utility.export_keras_to_tensorflow_model import export_keras_to_tensorflow
 from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
@@ -138,6 +140,9 @@ class WordVecCnnLstm(object):
 
     def test_run(self, sentence):
         print(self.predict(sentence))
+
+    def export_tensorflow_model(self, output_fld):
+        export_keras_to_tensorflow(self.model, output_fld, output_model_file=WordVecCnnLstm.model_name + '.pb')
 
 
 def main():
