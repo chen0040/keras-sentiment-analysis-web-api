@@ -285,7 +285,7 @@ cd demo
 python models_tensorflow_export_model.py
 ```
 
-The script [demo/models_tensorflow_export_model.py](demo/models_tensorflow_export_model.py) export the trained model
+The script [demo/tensorflow_keras_model_export_pb.py](demo/tensorflow_keras_model_export_pb.py) export the trained model
 as [demo/mdoels/tf/***.pb](demo/models/tf) 
 
 To test the exported tensorflow graph model file, run the following command:
@@ -295,7 +295,7 @@ cd demo
 python cnn_lstm_tensorflow_classifier.py
 ```
 
-The script [demo/cnn_lstm_tensorflow_classifier.py](demo/cnn_lstm_tensorflow_classifier.py) uses pure tensorflow code
+The script [demo/tensorflow_cnn_lstm_classifier.py](demo/tensorflow_cnn_lstm_classifier.py) uses pure tensorflow code
 to load the [wordvec_cnn_lstm.pb](demo/models/tf/wordvec_cnn_lstm.pb) and uses it to predict sentiment of the message
 
 

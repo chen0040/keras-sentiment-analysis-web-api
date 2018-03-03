@@ -18,14 +18,19 @@ def main():
 
     shuffle(text_label_pairs)
 
-    config_file_path = './models/wordvec_cnn_lstm_config.npy'
-    config = np.load(config_file_path).item()
-
-    idx2word = config['idx2word']
-    word2idx = config['word2idx']
-    max_len = config['max_len']
-    vocab_size = config['vocab_size']
-    labels = config['labels']
+    config_file_path = './models/tf/wordvec_cnn_lstm.csv'
+    first_line = True
+    max_len = 0
+    word2idx = dict()
+    with open(config_file_path, 'rt', encoding='utf-8') as f:
+        for line in f:
+            if first_line:
+                first_line = False
+                max_len = int(line.strip())
+            else:
+                word, idx = line.strip().split('\t')
+                idx = int(idx)
+                word2idx[word] = idx
 
     with tf.gfile.FastGFile('./models/tf/wordvec_cnn_lstm.pb', 'rb') as f:
         graph_def = tf.GraphDef()

@@ -41,3 +41,15 @@ def export_keras_to_tensorflow(keras_model, output_fld, output_model_file,
         constant_graph = graph_util.convert_variables_to_constants(sess, sess.graph.as_graph_def(), pred_node_names)
     graph_io.write_graph(constant_graph, output_fld, output_model_file, as_text=False)
     print('saved the freezed graph (ready for inference) at: ', output_model_file)
+
+
+def export_text_model_to_csv(config, output_fld, output_model_file):
+    word2idx = config['word2idx']
+    max_len = config['max_len']
+
+    file_path = output_fld + '/' + output_model_file
+    with open(file_path, 'wt', encoding='utf-8') as f:
+        f.write(str(max_len) + '\n')
+        for word, index in word2idx.items():
+            f.write(word + '\t' + str(index) + '\n')
+
