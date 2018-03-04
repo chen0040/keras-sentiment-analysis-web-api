@@ -46,10 +46,13 @@ def export_keras_to_tensorflow(keras_model, output_fld, output_model_file,
 def export_text_model_to_csv(config, output_fld, output_model_file):
     word2idx = config['word2idx']
     max_len = config['max_len']
+    labels = config['labels']
 
     file_path = output_fld + '/' + output_model_file
     with open(file_path, 'wt', encoding='utf-8') as f:
         f.write(str(max_len) + '\n')
+        for label, index in labels.items():
+            f.write('label\t' + label + '\t' + str(index) + '\n')
         for word, index in word2idx.items():
             f.write(word + '\t' + str(index) + '\n')
 

@@ -18,7 +18,7 @@ def main():
 
     shuffle(text_label_pairs)
 
-    config_file_path = './models/tf/wordvec_cnn_lstm.csv'
+    config_file_path = './models/tf/bidirectional_lstm_softmax.csv'
     first_line = True
     max_len = 0
     word2idx = dict()
@@ -35,7 +35,7 @@ def main():
                     idx = int(idx)
                     word2idx[word] = idx
 
-    with tf.gfile.FastGFile('./models/tf/wordvec_cnn_lstm.pb', 'rb') as f:
+    with tf.gfile.FastGFile('./models/tf/bidirectional_lstm_softmax.pb', 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
