@@ -12,6 +12,8 @@ def main():
 
     current_dir = os.path.dirname(__file__)
     sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
+
     data_file_path = current_dir + '/data/umich-sentiment-train.txt'
 
     from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs

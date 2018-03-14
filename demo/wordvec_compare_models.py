@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 
 def main():
     current_dir = os.path.dirname(__file__)
+    current_dir = current_dir if current_dir is not '' else '.'
 
     model_dir_path = current_dir + '/models'
     models = ['lstm_sigmoid', 'lstm_softmax', 'bidirectional_lstm_softmax', 'wordvec_cnn', 'wordvec_multi_channel_cnn', 'wordvec_cnn_lstm', 'glove_ffn']

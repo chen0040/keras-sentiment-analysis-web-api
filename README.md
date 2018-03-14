@@ -53,6 +53,7 @@ def main():
     current_dir = os.path.dirname(__file__)
     # this line ask sys to add the keras_sentiment_analysis module to system path
     sys.path.append(os.path.join(current_dir, '..')) 
+    current_dir = current_dir if current_dir is not '' else '.'
 
     output_dir_path = current_dir + '/models'
     data_file_path = current_dir + '/data/umich-sentiment-train.txt'
@@ -120,9 +121,9 @@ def main():
     np.random.seed(random_state)
     
     current_dir = os.path.dirname(__file__)
-    
     # this line ask sys to add the keras_sentiment_analysis module to system path
     sys.path.append(os.path.join(current_dir, '..')) 
+    current_dir = current_dir if current_dir is not '' else '.'
 
     model_dir_path = current_dir + '/models'
     data_file_path = current_dir + '/data/umich-sentiment-train.txt'

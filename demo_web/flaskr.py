@@ -7,6 +7,7 @@ import sys
 def main():
     current_dir = os.path.dirname(__file__)
     sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
 
     from keras_sentiment_analysis.library.cnn import WordVecCnn, WordVecMultiChannelCnn
     from keras_sentiment_analysis.library.cnn_lstm import WordVecCnnLstm

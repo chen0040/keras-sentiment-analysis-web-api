@@ -8,6 +8,9 @@ def main():
     np.random.seed(random_state)
 
     current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
+
     output_dir_path = current_dir + '/models'
     data_file_path = current_dir + '/data/umich-sentiment-train.txt'
 
