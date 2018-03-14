@@ -1,24 +1,27 @@
 from random import shuffle
-
+import os
+import sys
 import tensorflow as tf
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
-
-from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
-from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
 
 
 def main():
     random_state = 42
     np.random.seed(random_state)
 
-    model_dir_path = './models'
-    data_file_path = './data/umich-sentiment-train.txt'
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+    data_file_path = current_dir + '/data/umich-sentiment-train.txt'
+
+    from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+    from keras_sentiment_analysis.library.utility.tokenizer_utils import word_tokenize
+
     text_label_pairs = load_text_label_pairs(data_file_path)
 
     shuffle(text_label_pairs)
 
-    config_file_path = './models/tf/wordvec_cnn_lstm.csv'
+    config_file_path = current_dir + '/models/tf/wordvec_cnn_lstm.csv'
     first_line = True
     max_len = 0
     word2idx = dict()
@@ -35,7 +38,7 @@ def main():
                     idx = int(idx)
                     word2idx[word] = idx
 
-    with tf.gfile.FastGFile('./models/tf/wordvec_cnn_lstm.pb', 'rb') as f:
+    with tf.gfile.FastGFile(current_dir + '/models/tf/wordvec_cnn_lstm.pb', 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')

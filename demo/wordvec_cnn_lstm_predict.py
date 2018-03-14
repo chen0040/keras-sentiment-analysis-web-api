@@ -1,17 +1,22 @@
 from random import shuffle
-
 import numpy as np
-
-from keras_sentiment_analysis.library.cnn_lstm import WordVecCnnLstm
-from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+import os
+import sys
 
 
 def main():
     random_state = 42
     np.random.seed(random_state)
 
-    model_dir_path = './models'
-    data_file_path = './data/umich-sentiment-train.txt'
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+
+    model_dir_path = current_dir + '/models'
+    data_file_path = current_dir + '/data/umich-sentiment-train.txt'
+
+    from keras_sentiment_analysis.library.cnn_lstm import WordVecCnnLstm
+    from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+
     text_label_pairs = load_text_label_pairs(data_file_path)
 
     classifier = WordVecCnnLstm()

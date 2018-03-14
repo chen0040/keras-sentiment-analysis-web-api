@@ -3,11 +3,15 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
-from keras_sentiment_analysis.library.utility.plot_utils import plot_confusion_matrix, most_informative_feature_for_binary_classification
+import os
+import sys
 
 
 def main():
-    data_dir_path = './data'
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+
+    data_dir_path = current_dir + '/data'
 
     # Import `umich-sentiment-train.txt`
     df = pd.read_csv(data_dir_path + "/umich-sentiment-train.txt", sep='\t', header=None, usecols=[0, 1])
@@ -36,6 +40,10 @@ def main():
     score = metrics.accuracy_score(y_test, pred)
     print("accuracy:   %0.3f" % score)
     cm = metrics.confusion_matrix(y_test, pred, labels=[0, 1])
+
+    from keras_sentiment_analysis.library.utility.plot_utils import plot_confusion_matrix, \
+        most_informative_feature_for_binary_classification
+
     plot_confusion_matrix(cm, classes=[0, 1])
     most_informative_feature_for_binary_classification(tfidf_vectorizer, clf, n=30)
 

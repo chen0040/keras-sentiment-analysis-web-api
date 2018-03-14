@@ -2,13 +2,14 @@ from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
-
-from keras_sentiment_analysis.library.utility.glove_loader import GloveModel
-from keras_sentiment_analysis.library.utility.plot_utils import plot_confusion_matrix
-
+import os
+import sys
 
 def main():
-    data_dir_path = './data'
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+
+    data_dir_path = current_dir + '/data'
 
     # Import `umich-sentiment-train.txt`
     df = pd.read_csv(data_dir_path + "/umich-sentiment-train.txt", sep='\t', header=None, usecols=[0, 1])
@@ -20,6 +21,9 @@ def main():
 
     # Make training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+    from keras_sentiment_analysis.library.utility.glove_loader import GloveModel
+    from keras_sentiment_analysis.library.utility.plot_utils import plot_confusion_matrix
 
     glove_model = GloveModel()
     glove_model.load('./very_large_data')

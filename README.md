@@ -42,18 +42,25 @@ Below shows the sample code in [wordvec_bidirectional_lstm_softmax_train.py](dem
 
 ```python
 import numpy as np
-
-from keras_sentiment_analysis.library.lstm import WordVecBidirectionalLstmSoftmax
-from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
-from keras_sentiment_analysis.library.utility.text_fit import fit_text
+import os 
+import sys 
 
 
 def main():
     random_state = 42
     np.random.seed(random_state)
+    
+    current_dir = os.path.dirname(__file__)
+    # this line ask sys to add the keras_sentiment_analysis module to system path
+    sys.path.append(os.path.join(current_dir, '..')) 
 
-    output_dir_path = './models'
-    data_file_path = './data/umich-sentiment-train.txt'
+    output_dir_path = current_dir + '/models'
+    data_file_path = current_dir + '/data/umich-sentiment-train.txt'
+    
+    from keras_sentiment_analysis.library.lstm import WordVecBidirectionalLstmSoftmax
+    from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+    from keras_sentiment_analysis.library.utility.text_fit import fit_text
+
     text_data_model = fit_text(data_file_path)
     text_label_pairs = load_text_label_pairs(data_file_path)
 
@@ -104,17 +111,25 @@ Below shows the sample code in [wordvec_bidirectional_lstm_softmax_predict.py](d
 from random import shuffle
 
 import numpy as np
-
-from keras_sentiment_analysis.library.lstm import WordVecBidirectionalLstmSoftmax
-from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+import os 
+import sys 
 
 
 def main():
     random_state = 42
     np.random.seed(random_state)
+    
+    current_dir = os.path.dirname(__file__)
+    
+    # this line ask sys to add the keras_sentiment_analysis module to system path
+    sys.path.append(os.path.join(current_dir, '..')) 
 
-    model_dir_path = './models'
-    data_file_path = './data/umich-sentiment-train.txt'
+    model_dir_path = current_dir + '/models'
+    data_file_path = current_dir + '/data/umich-sentiment-train.txt'
+    
+    from keras_sentiment_analysis.library.lstm import WordVecBidirectionalLstmSoftmax
+    from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+
     text_label_pairs = load_text_label_pairs(data_file_path)
 
     classifier = WordVecBidirectionalLstmSoftmax()

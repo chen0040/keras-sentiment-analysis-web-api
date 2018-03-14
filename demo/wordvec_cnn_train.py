@@ -1,16 +1,20 @@
 import numpy as np
-
-from keras_sentiment_analysis.library.cnn import WordVecCnn
-from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
-from keras_sentiment_analysis.library.utility.text_fit import fit_text
+import sys
+import os
 
 
 def main():
     random_state = 42
     np.random.seed(random_state)
 
-    output_dir_path = './models'
-    data_file_path = './data/umich-sentiment-train.txt'
+    current_dir = os.path.dirname(__file__)
+    output_dir_path = current_dir + '/models'
+    data_file_path = current_dir + '/data/umich-sentiment-train.txt'
+
+    from keras_sentiment_analysis.library.cnn import WordVecCnn
+    from keras_sentiment_analysis.library.utility.simple_data_loader import load_text_label_pairs
+    from keras_sentiment_analysis.library.utility.text_fit import fit_text
+
     text_data_model = fit_text(data_file_path)
     text_label_pairs = load_text_label_pairs(data_file_path)
 

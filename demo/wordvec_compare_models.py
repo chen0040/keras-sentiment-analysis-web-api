@@ -4,7 +4,9 @@ from matplotlib import pyplot as plt
 
 
 def main():
-    model_dir_path = './models'
+    current_dir = os.path.dirname(__file__)
+
+    model_dir_path = current_dir + '/models'
     models = ['lstm_sigmoid', 'lstm_softmax', 'bidirectional_lstm_softmax', 'wordvec_cnn', 'wordvec_multi_channel_cnn', 'wordvec_cnn_lstm', 'glove_ffn']
     acc_cmp = dict()
     val_acc_cmp = dict()
